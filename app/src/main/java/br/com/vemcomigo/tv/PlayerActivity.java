@@ -1,3 +1,4 @@
+
 package br.com.vemcomigo.tv;
 
 import android.app.Activity;
@@ -12,11 +13,13 @@ import android.widget.Toast;
 
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MimeTypes;
-import androidx.media3.common.Player;
 import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.AspectRatioFrameLayout;
 import androidx.media3.ui.PlayerView;
+
+import java.util.Locale;
 
 public class PlayerActivity extends Activity {
 
@@ -27,7 +30,9 @@ public class PlayerActivity extends Activity {
     private int mode = 0;
 
     private final String[] modeNames = {
-        "AJUSTAR", "ZOOM", "ESTICAR"
+        "AJUSTAR",
+        "ZOOM",
+        "ESTICAR"
     };
 
     private final int[] resizeModes = {
@@ -52,20 +57,18 @@ public class PlayerActivity extends Activity {
         playerView = new PlayerView(this);
         playerView.setUseController(true);
         playerView.setKeepScreenOn(true);
-        playerView.setResizeMode(
-            AspectRatioFrameLayout.RESIZE_MODE_FIT
-        );
+        playerView.setResizeMode(resizeModes[mode]);
 
-        layout.addView(
-            playerView,
+        FrameLayout.LayoutParams playerParams =
             new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
-            )
-        );
+            );
+
+        layout.addView(playerView, playerParams);
 
         modeButton = new TextView(this);
-        modeButton.setText("AJUSTAR");
+        modeButton.setText(modeNames[mode]);
         modeButton.setTextColor(0xFFFFFFFF);
         modeButton.setTextSize(12);
         modeButton.setGravity(Gravity.CENTER);
@@ -85,11 +88,12 @@ public class PlayerActivity extends Activity {
 
         modeButton.setOnClickListener(v -> {
             mode = (mode + 1) % resizeModes.length;
+
             playerView.setResizeMode(resizeModes[mode]);
             modeButton.setText(modeNames[mode]);
 
             Toast.makeText(
-                this,
+                PlayerActivity.this,
                 "Imagem: " + modeNames[mode],
                 Toast.LENGTH_SHORT
             ).show();
@@ -123,7 +127,8 @@ public class PlayerActivity extends Activity {
             public void onPlayerError(PlaybackException error) {
                 Toast.makeText(
                     PlayerActivity.this,
-                    "Erro ao reproduzir: " + error.getErrorCodeName(),
+                    "Erro ao reproduzir: "
+                        + error.getErrorCodeName(),
                     Toast.LENGTH_LONG
                 ).show();
             }
@@ -135,9 +140,7 @@ public class PlayerActivity extends Activity {
         String path = uri.getPath();
 
         if (path != null) {
-            String lower = path.toLowerCase(
-                java.util.Locale.ROOT
-            );
+            String lower = path.toLowerCase(Locale.ROOT);
 
             if (lower.endsWith(".m3u8")) {
                 mediaBuilder.setMimeType(
@@ -176,11 +179,12 @@ public class PlayerActivity extends Activity {
             message,
             Toast.LENGTH_LONG
         ).show();
+
         finish();
     }
 
     @Override
-    protected void onWindowFocusChanged(boolean hasFocus) {
+    public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
         if (hasFocus) {
