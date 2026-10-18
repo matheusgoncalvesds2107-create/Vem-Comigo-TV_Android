@@ -6,7 +6,7 @@
     <application
         android:allowBackup="false"
         android:label="Vem Comigo TV"
-        android:icon="@drawable/logo"
+        android:icon="@android:drawable/sym_def_app_icon"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:usesCleartextTraffic="true">
 
